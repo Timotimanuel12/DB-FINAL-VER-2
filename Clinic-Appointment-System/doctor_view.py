@@ -44,13 +44,20 @@ class DoctorScreen(tk.Frame):
 
     def refresh(self):
         for i in self.tree.get_children(): self.tree.delete(i)
+        # CHANGE: Added "AND a.appointmentStatus IN ('Scheduled', 'Completed')"
+        # This hides Pending (unverified) and Cancelled appointments from the doctor.
         rows = database.fetch_all("""
             SELECT a.id, a.appointmentTime, a.appointmentStatus, a.doctorNotes, p.patientName 
             FROM appointment a JOIN patient p ON a.patientID=p.patientID 
-            WHERE a.doctorID=%s ORDER BY a.appointmentDate ASC
+            WHERE a.doctorID=%s 
+            AND a.appointmentStatus IN ('Scheduled', 'Completed')
+            ORDER BY a.appointmentDate ASC
         """, (self.did,))
-        for r in rows: self.tree.insert("", "end", values=(
-        r['id'], r['appointmentTime'], r['patientName'], r['appointmentStatus'], r['doctorNotes']))
+
+        for r in rows:
+            self.tree.insert("", "end", values=(
+                r['id'], r['appointmentTime'], r['patientName'], r['appointmentStatus'], r['doctorNotes']
+            ))
 
     def complete(self):
         sel = self.tree.selection()

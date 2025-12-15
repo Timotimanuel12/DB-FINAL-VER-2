@@ -189,7 +189,6 @@ class LoginScreen(tk.Frame):
         name = self.r_name.get()
         if not name: return messagebox.showerror("Error", "Name Required")
         
-        # Note: Ensure your database.py has execute_query function
         sql = "INSERT INTO patient (patientName, patientGender, patientBirthDate, patientPhoneNumber) VALUES (%s, %s, %s, %s)"
         try:
             new_id = database.execute_query(sql, (name, self.r_gender.get(), self.r_dob.get(), self.r_phone.get()))
